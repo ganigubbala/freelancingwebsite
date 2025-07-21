@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceHub - Sign In & Join</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #000;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Slideshow Background */
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* 4 images, each taking 100% width */
+            height: 100%;
+            display: flex;
+            z-index: 0;
+        }
+
+        .slideshow-image {
+            width: 25%; /* Each image takes 1/4 of the container */
+            height: 100%;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .slideshow-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            z-index: 1;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            25% { transform: translateX(-25%); }
+            45% { transform: translateX(-25%); }
+            50% { transform: translateX(-50%); }
+            70% { transform: translateX(-50%); }
+            75% { transform: translateX(-75%); }
+            95% { transform: translateX(-75%); }
+            100% { transform: translateX(0); }
+        }
+
+        .slideshow-container {
+            animation: slide 20s infinite;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            padding: 10px;
+            margin: 10px;
+            text-align: left;
+            display: inline-block;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            display: flex;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-sidebar {
+            flex: 1;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-sidebar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s infinite linear;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            z-index: 2;
+        }
+
+        .sidebar-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            z-index: 2;
+        }
+
+        .sidebar-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            z-index: 2;
+        }
+
+        .auth-forms {
+            flex: 1;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .form-container {
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .toggle-form a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-form a:hover {
+            color: #0056b3;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            margin: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .social-btn:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: floatCircle 8s infinite ease-in-out;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes floatCircle {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+            
+            .auth-sidebar {
+                padding: 2rem;
+            }
+            
+            .auth-forms {
+                padding: 2rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .social-login {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .auth-container {
+                border-radius: 15px;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Add API script -->
+
+    
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="index.html" class="logo">FreelanceHub</a>
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="window.location.href='signIn.html'">Sign In</button>
+                <button class="auth-btn" onclick="window.location.href='join.html'">Join</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Slideshow Background -->
+    <div class="slideshow-container">
+        <img src="photo-1522071820081-009f0129c71c.avif" class="slideshow-image" alt="Slide 1">
+        <img src="photo-1622675363311-3e1904dc1885.avif" class="slideshow-image" alt="Slide 2">
+        <img src="81U6-9Mx2bL.jpg" class="slideshow-image" alt="Slide 3">
+        <img src="pexels-photo-3184418.jpeg" class="slideshow-image" alt="Slide 4">
+    </div>
+
+    <div class="container">
+        <div class="floating-elements">
+            <div class="floating-circle"></div>
+            <div class="floating-circle"></div>
+            <div class="floating-circle"></div>
+        </div>
+        
+        <div class="auth-container">
+            <div class="auth-sidebar">
+                <div class="logo">FreelanceHub</div>
+                <h2 class="sidebar-title">Welcome Back!</h2>
+                <p class="sidebar-description">
+                    Join our thriving community of talented freelancers and innovative businesses. 
+                    Connect, collaborate, and create amazing projects together.
+                </p>
+            </div>
+            
+            <div class="auth-forms">
+                <!-- Sign In Form -->
+                <div class="form-container active" id="signin-form">
+                    <h2 class="form-title">Sign In</h2>
+                    <p class="form-subtitle">Welcome back! Please sign in to your account.</p>
+                    
+                    <div class="social-login">
+                        <button class="social-btn" onclick="socialLogin('google')">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            Google
+                        </button>
+                        <button class="social-btn" onclick="socialLogin('linkedin')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077b5">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                            LinkedIn
+                        </button>
+                    </div>
+                    
+                    <div class="divider">
+                        <span>Or sign in with email</span>
+                    </div>
+                    
+                    <form onsubmit="handleSignIn(event)">
+                        <div class="form-group">
+                            <label for="signin-email">Email Address</label>
+                            <input type="email" id="signin-email" name="email" required placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signin-password">Password</label>
+                            <input type="password" id="signin-password" name="password" required placeholder="Enter your password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signin-role">I want to</label>
+                            <select id="signin-role" name="role" required>
+                                <option value="">Select your role</option>
+                                <option value="client">Hire Freelancers</option>
+                                <option value="freelancer">Work as a Freelancer</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="auth-button">Sign In</button>
+                    </form>
+                    
+                    <div class="toggle-form">
+                        Don't have an account? <a href="#" onclick="toggleForm()">Join Now</a>
+                    </div>
+                </div>
+                
+                <!-- Join Form -->
+                <div class="form-container" id="join-form">
+                    <h2 class="form-title">Join FreelanceHub</h2>
+                    <p class="form-subtitle">Create your account and start your freelancing journey today.</p>
+                    
+                    <div class="social-login">
+                        <button class="social-btn" onclick="socialLogin('google')">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            Google
+                        </button>
+                        <button class="social-btn" onclick="socialLogin('linkedin')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077b5">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                            LinkedIn
+                        </button>
+                    </div>
+                    
+                    <div class="divider">
+                        <span>Or create account with email</span>
+                    </div>
+                    
+                    <form onsubmit="handleJoin(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="join-firstname">First Name</label>
+                                <input type="text" id="join-firstname" name="firstname" required placeholder="First name">
+                            </div>
+                            <div class="form-group">
+                                <label for="join-lastname">Last Name</label>
+                                <input type="text" id="join-lastname" name="lastname" required placeholder="Last name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="join-email">Email Address</label>
+                            <input type="email" id="join-email" name="email" required placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="join-password">Password</label>
+                            <input type="password" id="join-password" name="password" required placeholder="Create a password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="join-role">I want to</label>
+                            <select id="join-role" name="role" required>
+                                <option value="">Select your role</option>
+                                <option value="freelancer">Hire Freelancers</option>
+                                <option value="client">Work as a Freelancer</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="auth-button">Create Account</button>
+                    </form>
+                    
+                    <div class="toggle-form">
+                        Already have an account? <a href="#" onclick="toggleForm()">Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const signinForm = document.getElementById('signin-form');
+            const joinForm = document.getElementById('join-form');
+            
+            signinForm.classList.toggle('active');
+            joinForm.classList.toggle('active');
+        }
+
+        async function handleSignIn(event) {
+            event.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            const role = document.getElementById('signin-role').value;
+            
+            // Valid demo credentials
+            const validCredentials = {
+                // Client credentials
+                'client@example.com': { password: 'client123', name: 'Client User', role: 'client' },
+                'john@example.com': { password: 'test123', name: 'John Doe', role: 'client' },
+                'alice@example.com': { password: 'alice123', name: 'Alice Johnson', role: 'client' },
+                'bob@example.com': { password: 'bob123', name: 'Bob Wilson', role: 'client' },
+                
+                // Freelancer credentials
+                'freelancer@example.com': { password: 'freelancer123', name: 'Freelancer User', role: 'freelancer' },
+                'jane@example.com': { password: 'test123', name: 'Jane Smith', role: 'freelancer' },
+                'sarah@example.com': { password: 'sarah123', name: 'Sarah Davis', role: 'freelancer' },
+                'mike@example.com': { password: 'mike123', name: 'Mike Brown', role: 'freelancer' },
+                'emma@example.com': { password: 'emma123', name: 'Emma Wilson', role: 'freelancer' },
+                'david@example.com': { password: 'david123', name: 'David Lee', role: 'freelancer' }
+            };
+            
+            // Check if credentials are valid
+            if (validCredentials[email] && validCredentials[email].password === password) {
+                const userInfo = validCredentials[email];
+                
+                // Store user info in localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    email: email,
+                    role: role || userInfo.role,
+                    name: userInfo.name
+                }));
+                
+                // Show success message
+                showNotification(`Login successful! Welcome ${userInfo.name}. Redirecting...`);
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    if (role === 'client' || userInfo.role === 'client') {
+                        window.location.href = 'clientlogin.html';
+                    } else if (role === 'freelancer' || userInfo.role === 'freelancer') {
+                        window.location.href = 'freelancerlogin.html';
+                    }
+                }, 1000);
+            } else {
+                showNotification('Invalid credentials. Please check your email and password.');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #007bff;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function handleJoin(event) {
+            event.preventDefault();
+            window.location.href = 'join.html';
+        }
+
+        function socialLogin(provider) {
+            alert(`${provider} login would be implemented here!`);
+        }
+
+        // Add floating animation to elements
+        document.querySelectorAll('.floating-circle').forEach((circle, index) => {
+            setInterval(() => {
+                const randomX = Math.random() * 30 - 15;
+                const randomY = Math.random() * 30 - 15;
+                circle.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            }, 3000 + index * 1000);
+        });
+
+        // Add input focus animations
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Scroll effect for header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            const containerTop = document.querySelector('.container').getBoundingClientRect().top;
+            if (containerTop < 0) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                header.style.background = 'transparent';
+            }
+        });
+    </script>
+</body>
+</html>

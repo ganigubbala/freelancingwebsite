@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceHub - Earnings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #000;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            padding: 10px;
+            margin: 10px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            background: #fff;
+            color: #333;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #007bff;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 0 4px 4px 0;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .auth-btn {
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Top Left Side Menu */
+        .top-left-menu {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10001;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .top-left-menu.active {
+            left: 0;
+        }
+
+        .top-left-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .top-left-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .top-left-menu-header {
+            padding: 2rem 1.5rem 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .top-left-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .top-left-menu-close:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .top-left-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .top-left-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .top-left-menu-item .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .top-left-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+
+        .top-left-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Dashboard Sections */
+        .dashboard-section {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        /* Earnings Dashboard */
+        .earnings-dashboard {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .earnings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .earnings-card {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .earnings-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .earnings-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .earnings-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .earnings-chart {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .chart-bar {
+            width: 30px;
+            background: linear-gradient(to top, #007bff, #0056b3);
+            border-radius: 3px 3px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            transform: scaleY(1.1);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            .auth-buttons {
+                margin-top: 1rem;
+            }
+
+            .top-left-menu-toggle {
+                display: block;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .earnings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .earnings-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Left Side Menu -->
+    <div class="top-left-menu" id="topLeftMenu">
+        <button class="top-left-menu-close" onclick="toggleTopLeftMenu()">×</button>
+        <div class="top-left-menu-header">
+            <h3 style="margin: 0; color: #333; font-size: 1.2rem;">FreelanceHub</h3>
+        </div>
+        <div class="top-left-menu-nav">
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_dashboard.html'">
+                <span class="icon">📊</span>
+                Dashboard
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_jobs.html'">
+                <span class="icon">💼</span>
+                Find Jobs
+            </button>
+            <button class="top-left-menu-item active" onclick="window.location.href='freelancer_earnings.html'">
+                <span class="icon">💰</span>
+                Earnings
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_portfolio.html'">
+                <span class="icon">🎨</span>
+                Portfolio
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_messages.html'">
+                <span class="icon">✉️</span>
+                Messages
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_profile.html'">
+                <span class="icon">👤</span>
+                Profile
+            </button>
+        </div>
+    </div>
+    <div class="top-left-menu-overlay" id="topLeftMenuOverlay" onclick="toggleTopLeftMenu()"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <button class="top-left-menu-toggle" onclick="toggleTopLeftMenu()">☰</button>
+            <a href="#" class="logo">FreelanceHub</a>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search for jobs, skills, or clients..." id="searchInput">
+                <button class="search-btn" onclick="performSearch()">🔍</button>
+            </div>
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="showNotifications()">🔔</button>
+                <button class="auth-btn" onclick="showMessages()">✉️</button>
+                <button class="auth-btn" onclick="showProposals()">📋</button>
+                <div class="user-avatar" onclick="showUserMenu()">F</div>
+            </div>
+        </div>
+    </header>
+    <main style="margin-top:100px;">
+        <section class="dashboard-section">
+            <div class="container">
+                <div class="earnings-dashboard">
+                    <h2 class="section-title">Earnings Overview</h2>
+                    <div class="earnings-grid">
+                        <div class="earnings-card">
+                            <div class="earnings-amount">$2,450</div>
+                            <div class="earnings-label">This Month</div>
+                        </div>
+                        <div class="earnings-card">
+                            <div class="earnings-amount">$12,800</div>
+                            <div class="earnings-label">Total Earned</div>
+                        </div>
+                        <div class="earnings-card">
+                            <div class="earnings-amount">$500</div>
+                            <div class="earnings-label">Pending</div>
+                        </div>
+                        <div class="earnings-card">
+                            <div class="earnings-amount">$1,200</div>
+                            <div class="earnings-label">Available for Withdrawal</div>
+                        </div>
+                    </div>
+                    <div class="earnings-chart">
+                        <div class="chart-bar" style="height: 60%;" title="Mon"></div>
+                        <div class="chart-bar" style="height: 80%;" title="Tue"></div>
+                        <div class="chart-bar" style="height: 45%;" title="Wed"></div>
+                        <div class="chart-bar" style="height: 90%;" title="Thu"></div>
+                        <div class="chart-bar" style="height: 75%;" title="Fri"></div>
+                        <div class="chart-bar" style="height: 85%;" title="Sat"></div>
+                        <div class="chart-bar" style="height: 70%;" title="Sun"></div>
+                    </div>
+                </div>
+                <div class="earnings-history" style="margin-top:2rem;">
+                    <h3>Transaction History</h3>
+                    <ul style="background:white;padding:1rem;border-radius:10px;list-style:none;">
+                        <li>+ $1,200 - Payment from "TechCorp" - 2 days ago</li>
+                        <li>- $300 - Withdrawal to PayPal - 5 days ago</li>
+                        <li>+ $500 - Payment from "StartupXYZ" - 1 week ago</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        // Toggle top-left menu
+        function toggleTopLeftMenu() {
+            const topLeftMenu = document.getElementById('topLeftMenu');
+            const overlay = document.getElementById('topLeftMenuOverlay');
+            topLeftMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            showNotification(`Searching for: ${searchTerm}`);
+        }
+
+        // Notification functions
+        function showNotifications() {
+            showNotification('You have 5 new notifications');
+        }
+
+        function showMessages() {
+            showNotification('You have 3 new messages');
+        }
+
+        function showProposals() {
+            showNotification('Opening your proposals...');
+        }
+
+        function showUserMenu() {
+            showNotification('Opening user menu...');
+        }
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #007bff;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 4px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                header.style.background = 'transparent';
+            }
+        });
+
+        // Animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 

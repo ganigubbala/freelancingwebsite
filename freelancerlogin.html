@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceHub - Freelancer Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #000;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            padding: 10px;
+            margin: 10px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            background: #fff;
+            color: #333;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #007bff;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 0 4px 4px 0;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .auth-btn {
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Top Left Side Menu */
+        .top-left-menu {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10001;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .top-left-menu.active {
+            left: 0;
+        }
+
+        .top-left-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .top-left-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .top-left-menu-header {
+            padding: 2rem 1.5rem 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .top-left-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .top-left-menu-close:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .top-left-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .top-left-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .top-left-menu-item .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .top-left-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+
+        .top-left-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu-header {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .side-menu-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .side-menu-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .side-menu-user-info h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .side-menu-user-info p {
+            margin: 0.25rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .side-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .side-menu-section {
+            margin-bottom: 1rem;
+        }
+
+        .side-menu-section h4 {
+            padding: 0.5rem 2rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .side-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 2rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .side-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .side-menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .side-menu-item .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .side-menu-item .badge {
+            background: #007bff;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .side-menu-item.active .badge {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-menu-divider {
+            height: 1px;
+            background: #ddd;
+            margin: 1rem 0;
+        }
+
+        .side-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .side-menu-close:hover {
+            background: #f0f2f5;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            z-index: 1;
+        }
+
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%;
+            height: 100%;
+            display: flex;
+            animation: slide 20s infinite;
+        }
+
+        .slideshow-image {
+            width: 25%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            25% { transform: translateX(-25%); }
+            45% { transform: translateX(-25%); }
+            50% { transform: translateX(-50%); }
+            70% { transform: translateX(-50%); }
+            75% { transform: translateX(-75%); }
+            95% { transform: translateX(-75%); }
+            100% { transform: translateX(0); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero h1 .italic {
+            font-style: italic;
+            color: #007bff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Main Dashboard Sections */
+        .dashboard-section {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        /* Earnings Dashboard */
+        .earnings-dashboard {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .earnings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .earnings-card {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .earnings-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .earnings-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .earnings-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .earnings-chart {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .chart-bar {
+            width: 30px;
+            background: linear-gradient(to top, #007bff, #0056b3);
+            border-radius: 3px 3px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .chart-bar:hover {
+            transform: scaleY(1.1);
+        }
+
+        /* Job Opportunities */
+        .jobs-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .jobs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .jobs-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .job-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .job-description {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .job-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .job-budget {
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        .job-skills {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .profile-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Portfolio Section */
+        .portfolio-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 3rem;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            .auth-buttons {
+                margin-top: 1rem;
+            }
+
+            .top-left-menu-toggle {
+                display: block;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .earnings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .jobs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .earnings-card, .job-card, .portfolio-item {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Left Side Menu -->
+    <div class="top-left-menu" id="topLeftMenu">
+        <button class="top-left-menu-close" onclick="toggleTopLeftMenu()">×</button>
+        <div class="top-left-menu-header">
+            <h3 style="margin: 0; color: #333; font-size: 1.2rem;">FreelanceHub</h3>
+        </div>
+        <div class="top-left-menu-nav">
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_dashboard.html'">
+                <span class="icon">📊</span>
+                Dashboard
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_jobs.html'">
+                <span class="icon">💼</span>
+                Find Jobs
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_earnings.html'">
+                <span class="icon">💰</span>
+                Earnings
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_portfolio.html'">
+                <span class="icon">🎨</span>
+                Portfolio
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_messages.html'">
+                <span class="icon">✉️</span>
+                Messages
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='freelancer_profile.html'">
+                <span class="icon">👤</span>
+                Profile
+            </button>
+        </div>
+    </div>
+    <div class="top-left-menu-overlay" id="topLeftMenuOverlay" onclick="toggleTopLeftMenu()"></div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <button class="side-menu-close" onclick="toggleSideMenu()">×</button>
+        <div class="side-menu-header">
+            <div class="side-menu-user">
+                <div class="side-menu-avatar">F</div>
+                <div class="side-menu-user-info">
+                    <h3>freelancer_user</h3>
+                    <p>Freelancer</p>
+                </div>
+            </div>
+        </div>
+        <div class="side-menu-nav">
+            <div class="side-menu-section">
+                <h4>Account</h4>
+                <button class="side-menu-item" onclick="showMessages()"><span class="icon">✉️</span>Messages<span class="badge">3</span></button>
+                <button class="side-menu-item" onclick="showNotifications()"><span class="icon">🔔</span>Notifications<span class="badge">5</span></button>
+            </div>
+            <div class="side-menu-divider"></div>
+            <div class="side-menu-section">
+                <h4>Settings</h4>
+                <button class="side-menu-item"><span class="icon">⚙️</span>Profile Settings</button>
+                <button class="side-menu-item" onclick="logout()"><span class="icon">🔒</span>Logout</button>
+            </div>
+        </div>
+    </div>
+    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+
+            <button class="top-left-menu-toggle" onclick="toggleTopLeftMenu()">☰</button>
+            <a href="index.html" class="logo">FreelanceHub</a>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search for jobs, skills, or clients..." id="searchInput">
+                <button class="search-btn" onclick="performSearch()">🔍</button>
+            </div>
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="showNotifications()">🔔</button>
+                <button class="auth-btn" onclick="showMessages()">✉️</button>
+                <button class="auth-btn" onclick="showProposals()">📋</button>
+                <div class="user-avatar" onclick="showUserMenu()">F</div>
+                <button class="menu-toggle" onclick="toggleSideMenu()">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="slideshow-container">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Tech Team Collaboration" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Tech+Team+Collaboration'">
+            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Software Development Team" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Software+Development+Team'">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Coding Team Meeting" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Coding+Team+Meeting'">
+            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Tech Startup Team" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Tech+Startup+Team'">
+        </div>
+        <div class="hero-content">
+            <h1>Welcome to FreelanceHub, <span class="italic">Freelancer</span></h1>
+            <p>Find amazing opportunities, showcase your skills, and grow your freelance career. Your next big project is waiting!</p>
+        </div>
+    </section>
+
+    <!-- Main Dashboard -->
+    <section class="dashboard-section">
+        <div class="container">
+            <!-- Earnings Dashboard -->
+            <div class="earnings-dashboard">
+                <h2 class="section-title">Your Earnings Dashboard</h2>
+                <div class="earnings-grid">
+                    <div class="earnings-card">
+                        <div class="earnings-amount">$2,450</div>
+                        <div class="earnings-label">This Month</div>
+                    </div>
+                    <div class="earnings-card">
+                        <div class="earnings-amount">$12,800</div>
+                        <div class="earnings-label">Total Earned</div>
+                    </div>
+                    <div class="earnings-card">
+                        <div class="earnings-amount">8</div>
+                        <div class="earnings-label">Active Projects</div>
+                    </div>
+                    <div class="earnings-card">
+                        <div class="earnings-amount">4.9⭐</div>
+                        <div class="earnings-label">Average Rating</div>
+                    </div>
+                </div>
+                <div class="earnings-chart">
+                    <div class="chart-bar" style="height: 60%;" title="Mon"></div>
+                    <div class="chart-bar" style="height: 80%;" title="Tue"></div>
+                    <div class="chart-bar" style="height: 45%;" title="Wed"></div>
+                    <div class="chart-bar" style="height: 90%;" title="Thu"></div>
+                    <div class="chart-bar" style="height: 75%;" title="Fri"></div>
+                    <div class="chart-bar" style="height: 85%;" title="Sat"></div>
+                    <div class="chart-bar" style="height: 70%;" title="Sun"></div>
+                </div>
+            </div>
+
+            <!-- Job Opportunities -->
+            <div class="jobs-section">
+                <div class="jobs-header">
+                    <h2 class="section-title">Recommended Jobs</h2>
+                    <div class="jobs-filters">
+                        <button class="filter-btn active" onclick="filterJobs('all')">All</button>
+                        <button class="filter-btn" onclick="filterJobs('web-design')">Web Design</button>
+                        <button class="filter-btn" onclick="filterJobs('development')">Development</button>
+                        <button class="filter-btn" onclick="filterJobs('writing')">Writing</button>
+                        <button class="filter-btn" onclick="filterJobs('design')">Design</button>
+                    </div>
+                </div>
+                <div class="jobs-grid" id="jobsGrid">
+                    <!-- Jobs will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">F</div>
+                    <div class="profile-info">
+                        <h3>Freelancer Name</h3>
+                        <p>Full Stack Developer | UI/UX Designer | Content Writer</p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">95%</div>
+                                <div class="stat-label">Job Success</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">127</div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.9</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Section -->
+            <div class="portfolio-section">
+                <h2 class="section-title">Featured Portfolio</h2>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop" class="portfolio-image" alt="Project 1" onerror="this.src='https://via.placeholder.com/400x200/007bff/ffffff?text=E-commerce+Website'">
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title">E-commerce Website</h3>
+                            <p class="portfolio-description">Modern e-commerce platform with React and Node.js</p>
+                        </div>
+                    </div>
+                    <div class="portfolio-item">
+                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=200&fit=crop" class="portfolio-image" alt="Project 2" onerror="this.src='https://via.placeholder.com/400x200/007bff/ffffff?text=Mobile+App+Design'">
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title">Mobile App Design</h3>
+                            <p class="portfolio-description">UI/UX design for fitness tracking mobile app</p>
+                        </div>
+                    </div>
+                    <div class="portfolio-item">
+                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop" class="portfolio-image" alt="Project 3" onerror="this.src='https://via.placeholder.com/400x200/007bff/ffffff?text=Brand+Identity'">
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title">Brand Identity</h3>
+                            <p class="portfolio-description">Complete brand identity design for startup</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Sample job data
+        const jobsData = [
+            {
+                id: 1,
+                title: "React Developer for E-commerce Platform",
+                description: "Looking for an experienced React developer to build a modern e-commerce platform with payment integration.",
+                budget: "$2,500 - $4,000",
+                skills: ["React", "Node.js", "MongoDB", "Stripe"],
+                category: "development",
+                client: "TechCorp Inc.",
+                posted: "2 hours ago"
+            },
+            {
+                id: 2,
+                title: "UI/UX Designer for Mobile App",
+                description: "Need a creative designer to create beautiful and intuitive mobile app interfaces.",
+                budget: "$1,800 - $3,200",
+                skills: ["Figma", "Adobe XD", "Prototyping", "Mobile Design"],
+                category: "design",
+                client: "StartupXYZ",
+                posted: "4 hours ago"
+            },
+            {
+                id: 3,
+                title: "Content Writer for Tech Blog",
+                description: "Seeking a skilled content writer to create engaging articles about technology trends.",
+                budget: "$500 - $1,200",
+                skills: ["Content Writing", "SEO", "Tech Writing", "Blogging"],
+                category: "writing",
+                client: "TechBlog Media",
+                posted: "6 hours ago"
+            },
+            {
+                id: 4,
+                title: "WordPress Developer for Business Website",
+                description: "Experienced WordPress developer needed to build a professional business website.",
+                budget: "$800 - $1,500",
+                skills: ["WordPress", "PHP", "CSS", "SEO"],
+                category: "web-design",
+                client: "Business Solutions",
+                posted: "1 day ago"
+            },
+            {
+                id: 5,
+                title: "Logo Designer for Restaurant Chain",
+                description: "Creative logo designer to create unique branding for a new restaurant chain.",
+                budget: "$300 - $800",
+                skills: ["Logo Design", "Illustrator", "Branding", "Typography"],
+                category: "design",
+                client: "FoodCorp",
+                posted: "1 day ago"
+            },
+            {
+                id: 6,
+                title: "Python Developer for Data Analysis Tool",
+                description: "Python developer to build a data analysis and visualization tool.",
+                budget: "$3,000 - $5,000",
+                skills: ["Python", "Pandas", "Matplotlib", "SQL"],
+                category: "development",
+                client: "DataTech Solutions",
+                posted: "2 days ago"
+            }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadJobs();
+            checkUserRegistration();
+        });
+
+        // Check if user is registered and display their name
+        function checkUserRegistration() {
+            const userData = localStorage.getItem('freelanceHubUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                const userName = user.firstName || 'Freelancer';
+                
+                // Update user name in hero section
+                const heroTitle = document.querySelector('.hero h1');
+                if (heroTitle) {
+                    heroTitle.innerHTML = `Welcome to FreelanceHub, <span class="italic">${userName}</span>`;
+                }
+                
+                // Update profile name
+                const profileName = document.querySelector('.profile-info h3');
+                if (profileName) {
+                    profileName.textContent = `${user.firstName} ${user.lastName || ''}`;
+                }
+                
+                // Update user avatar
+                const userAvatar = document.querySelector('.user-avatar');
+                if (userAvatar) {
+                    userAvatar.textContent = user.firstName ? user.firstName.charAt(0).toUpperCase() : 'F';
+                }
+                
+                // Update side menu user info
+                const sideMenuUserInfo = document.querySelector('.side-menu-user-info h3');
+                if (sideMenuUserInfo) {
+                    sideMenuUserInfo.textContent = user.firstName ? `${user.firstName}_${user.lastName || 'user'}` : 'freelancer_user';
+                }
+                
+                // Update side menu avatar
+                const sideMenuAvatar = document.querySelector('.side-menu-avatar');
+                if (sideMenuAvatar) {
+                    sideMenuAvatar.textContent = user.firstName ? user.firstName.charAt(0).toUpperCase() : 'F';
+                }
+                
+                console.log('Welcome back,', userName);
+            }
+        }
+
+        // Load jobs into the grid
+        function loadJobs(filter = 'all') {
+            const jobsGrid = document.getElementById('jobsGrid');
+            jobsGrid.innerHTML = '';
+
+            const filteredJobs = filter === 'all' ? jobsData : jobsData.filter(job => job.category === filter);
+
+            filteredJobs.forEach(job => {
+                const jobCard = createJobCard(job);
+                jobsGrid.appendChild(jobCard);
+            });
+        }
+
+        // Create job card element
+        function createJobCard(job) {
+            const card = document.createElement('div');
+            card.className = 'job-card';
+            card.onclick = () => openJobDetails(job.id);
+
+            card.innerHTML = `
+                <div class="job-title">${job.title}</div>
+                <div class="job-description">${job.description}</div>
+                <div class="job-meta">
+                    <span class="job-budget">${job.budget}</span>
+                    <span style="color: #666; font-size: 0.9rem;">${job.posted}</span>
+                </div>
+                <div class="job-skills">
+                    ${job.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                </div>
+                <div class="job-actions">
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); submitProposal(${job.id})">Submit Proposal</button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); saveJob(${job.id})">Save Job</button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Filter jobs
+        function filterJobs(category) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadJobs(category);
+        }
+
+        // Toggle top-left menu
+        function toggleTopLeftMenu() {
+            const topLeftMenu = document.getElementById('topLeftMenu');
+            const overlay = document.getElementById('topLeftMenuOverlay');
+            topLeftMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Toggle side menu
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            sideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Navigate to different sections
+        function navigateTo(section) {
+            // Remove active class from all menu items
+            document.querySelectorAll('.top-left-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.target.closest('.top-left-menu-item').classList.add('active');
+            
+            // Handle navigation based on section
+            switch(section) {
+                case 'dashboard':
+                    showNotification('You are already on the dashboard');
+                    break;
+                case 'jobs':
+                    showNotification('Opening job search...');
+                    break;
+                case 'earnings':
+                    showNotification('Opening earnings dashboard...');
+                    break;
+                case 'portfolio':
+                    showNotification('Opening portfolio...');
+                    break;
+                case 'messages':
+                    showNotification('Opening messages...');
+                    break;
+                case 'profile':
+                    showNotification('Opening profile settings...');
+                    break;
+            }
+            
+            // Close the menu
+            toggleTopLeftMenu();
+        }
+
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredJobs = jobsData.filter(job => 
+                job.title.toLowerCase().includes(searchTerm) ||
+                job.description.toLowerCase().includes(searchTerm) ||
+                job.skills.some(skill => skill.toLowerCase().includes(searchTerm))
+            );
+
+            const jobsGrid = document.getElementById('jobsGrid');
+            jobsGrid.innerHTML = '';
+
+            if (filteredJobs.length === 0) {
+                jobsGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No jobs found matching your search.</p>';
+                return;
+            }
+
+            filteredJobs.forEach(job => {
+                const jobCard = createJobCard(job);
+                jobsGrid.appendChild(jobCard);
+            });
+        }
+
+        // Job actions
+        function submitProposal(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            showNotification(`Proposal submitted for: ${job.title}`);
+        }
+
+        function saveJob(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            showNotification(`Job saved: ${job.title}`);
+        }
+
+        function openJobDetails(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            showNotification(`Opening details for: ${job.title}`);
+        }
+
+        // Notification functions
+        function showNotifications() {
+            showNotification('You have 5 new notifications');
+        }
+
+        function showMessages() {
+            showNotification('You have 3 new messages');
+        }
+
+        function showProposals() {
+            showNotification('Opening your proposals...');
+        }
+
+        function showUserMenu() {
+            toggleSideMenu();
+        }
+
+        // Logout function
+        function logout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('freelanceHubUser');
+            localStorage.removeItem('freelanceHubToken');
+            
+            // Show logout notification
+            showNotification('Logged out successfully');
+            
+            // Redirect to sign-in page after a short delay
+            setTimeout(() => {
+                window.location.href = 'signIn.html';
+            }, 1000);
+        }
+
+        // Show wishlist
+        function showWishlist() {
+            showNotification('Opening your wishlist...');
+        }
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #007bff;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 4px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            const hero = document.querySelector('.hero');
+            const heroHeight = hero.offsetHeight;
+
+            if (window.scrollY > heroHeight) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                header.style.background = 'transparent';
+            }
+        });
+
+        // Animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 

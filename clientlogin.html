@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreelanceHub - Client Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #000;
+        }
+
+        /* Header */
+        .header {
+            background: transparent;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        /* Top Left Side Menu */
+        .top-left-menu {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10001;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .top-left-menu.active {
+            left: 0;
+        }
+
+        .top-left-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .top-left-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .top-left-menu-header {
+            padding: 2rem 1.5rem 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .top-left-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .top-left-menu-close:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .top-left-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .top-left-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .top-left-menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .top-left-menu-item .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Project Post Form Modal */
+        .project-form-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10002;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .project-form-modal.active {
+            display: flex;
+        }
+
+        .project-form-container {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        .project-form-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .project-form-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .project-form-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        .project-form-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-form-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .project-form-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .budget-range {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .budget-range input {
+            flex: 1;
+        }
+
+        .budget-range span {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(0, 123, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            background: rgba(0, 123, 255, 0.1);
+            border-color: #0056b3;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-text {
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-upload-hint {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e1e5e9;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e1e5e9;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #007bff;
+            transform: scale(1.2);
+        }
+
+        .step-dot.completed {
+            background: #28a745;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: #bbdefb;
+        }
+
+        .tag.selected {
+            background: #007bff;
+            color: white;
+        }
+
+        .top-left-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+
+        .top-left-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+
+
+        .logo {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 30px;
+            padding: 10px;
+            margin: 10px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            background: #fff;
+            color: #333;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #007bff;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 0 4px 4px 0;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            z-index: 1;
+        }
+
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%;
+            height: 100%;
+            display: flex;
+            animation: slide 20s infinite;
+        }
+
+        .slideshow-image {
+            width: 25%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            25% { transform: translateX(-25%); }
+            45% { transform: translateX(-25%); }
+            50% { transform: translateX(-50%); }
+            70% { transform: translateX(-50%); }
+            75% { transform: translateX(-75%); }
+            95% { transform: translateX(-75%); }
+            100% { transform: translateX(0); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero h1 .italic {
+            font-style: italic;
+            color: #007bff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-attribution {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            margin-top: 1rem;
+        }
+
+        /* Category Navigation */
+        .category-nav {
+            background: #fff;
+            padding: 1rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .category-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .category-links {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .category-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .category-links a:hover {
+            color: #007bff;
+        }
+
+        /* Recommended Section */
+        .recommended-section {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .recommended-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .recommended-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: #007bff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .categories-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        .category-sidebar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .category-list li:hover {
+            color: #007bff;
+        }
+
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .service-info {
+            padding: 1.5rem;
+        }
+
+        .service-provider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .provider-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .provider-name {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .provider-level {
+            background: #333;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .service-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .service-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffb33e;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .service-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .heart-icon:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        /* Showcase Section */
+        .showcase-section {
+            padding: 5rem 0;
+            background: #f0f2f5;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .showcase-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .showcase-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .showcase-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .showcase-category {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #555;
+            padding-top: 1rem;
+            text-align: center;
+            color: #ccc;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu-header {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .side-menu-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .side-menu-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .side-menu-user-info h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .side-menu-user-info p {
+            margin: 0.25rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .side-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .side-menu-section {
+            margin-bottom: 1rem;
+        }
+
+        .side-menu-section h4 {
+            padding: 0.5rem 2rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .side-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 2rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .side-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .side-menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .side-menu-item .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .side-menu-item .badge {
+            background: #007bff;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .side-menu-item.active .badge {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-menu-divider {
+            height: 1px;
+            background: #ddd;
+            margin: 1rem 0;
+        }
+
+        .side-menu-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .side-menu-close:hover {
+            background: #f0f2f5;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-btn {
+            background: white;
+            color: #333;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            .auth-buttons {
+                margin-top: 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .top-left-menu-toggle {
+                display: block;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-left-menu {
+                width: 280px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification Animation */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Slide In Up Animation */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Form step transition */
+        .form-step {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* Responsive adjustments for form */
+        @media (max-width: 768px) {
+            .project-form-container {
+                margin: 1rem;
+                max-height: 95vh;
+            }
+            
+            .project-form-body {
+                padding: 1.5rem;
+            }
+            
+            .budget-range {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .budget-range span {
+                text-align: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Left Side Menu -->
+    <div class="top-left-menu" id="topLeftMenu">
+        <button class="top-left-menu-close" onclick="toggleTopLeftMenu()">×</button>
+        <div class="top-left-menu-header">
+            <h3 style="margin: 0; color: #333; font-size: 1.2rem;">FreelanceHub</h3>
+        </div>
+        <div class="top-left-menu-nav">
+            <button class="top-left-menu-item active" onclick="navigateTo('home')">
+                <span class="icon">🏠</span>
+                Home
+            </button>
+            <button class="top-left-menu-item" onclick="navigateTo('post-project')">
+                <span class="icon">📝</span>
+                Post a Project
+            </button>
+            <button class="top-left-menu-item" onclick="window.location.href='client_manage_orders.html'">
+                <span class="icon">📋</span>
+                Manage Orders
+            </button>
+            <button class="top-left-menu-item" onclick="navigateTo('dashboard')">
+                <span class="icon">📊</span>
+                Dashboard
+            </button>
+        </div>
+    </div>
+    <div class="top-left-menu-overlay" id="topLeftMenuOverlay" onclick="toggleTopLeftMenu()"></div>
+
+    <!-- Project Post Form Modal -->
+    <div class="project-form-modal" id="projectFormModal">
+        <div class="project-form-container">
+            <div class="project-form-header">
+                <button class="project-form-close" onclick="closeProjectForm()">×</button>
+                <h2>Post a New Project</h2>
+                <p>Tell us about your project and find the perfect freelancer</p>
+            </div>
+            <div class="project-form-body">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="step-indicator">
+                    <div class="step-dot active" id="step1"></div>
+                    <div class="step-dot" id="step2"></div>
+                    <div class="step-dot" id="step3"></div>
+                </div>
+
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" id="step1Content">
+                    <div class="form-group">
+                        <label class="form-label">Project Title *</label>
+                        <input type="text" class="form-input" id="projectTitle" placeholder="e.g., Design a modern logo for my startup">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select class="form-input form-select" id="projectCategory">
+                            <option value="">Select a category</option>
+                            <option value="web-design">Web Design</option>
+                            <option value="graphic-design">Graphic Design</option>
+                            <option value="writing">Writing & Translation</option>
+                            <option value="video">Video & Animation</option>
+                            <option value="music">Music & Audio</option>
+                            <option value="programming">Programming & Tech</option>
+                            <option value="business">Business</option>
+                            <option value="marketing">Digital Marketing</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Description *</label>
+                        <textarea class="form-input form-textarea" id="projectDescription" placeholder="Describe your project in detail. What are you looking for? What are your goals?"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="closeProjectForm()">Cancel</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Budget & Timeline -->
+                <div class="form-step" id="step2Content">
+                    <div class="form-group">
+                        <label class="form-label">Budget Range *</label>
+                        <div class="budget-range">
+                            <input type="number" class="form-input" id="budgetMin" placeholder="Min" min="0">
+                            <span>to</span>
+                            <input type="number" class="form-input" id="budgetMax" placeholder="Max" min="0">
+                            <span>USD</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Timeline *</label>
+                        <select class="form-input form-select" id="projectTimeline">
+                            <option value="">Select timeline</option>
+                            <option value="1-week">Less than 1 week</option>
+                            <option value="1-2-weeks">1-2 weeks</option>
+                            <option value="1-month">1 month</option>
+                            <option value="1-3-months">1-3 months</option>
+                            <option value="3-6-months">3-6 months</option>
+                            <option value="6+months">6+ months</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills Required</label>
+                        <div class="tags-container" id="skillsContainer">
+                            <span class="tag" onclick="toggleTag(this)">JavaScript</span>
+                            <span class="tag" onclick="toggleTag(this)">React</span>
+                            <span class="tag" onclick="toggleTag(this)">Node.js</span>
+                            <span class="tag" onclick="toggleTag(this)">Python</span>
+                            <span class="tag" onclick="toggleTag(this)">UI/UX Design</span>
+                            <span class="tag" onclick="toggleTag(this)">Logo Design</span>
+                            <span class="tag" onclick="toggleTag(this)">Content Writing</span>
+                            <span class="tag" onclick="toggleTag(this)">Video Editing</span>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Additional Details -->
+                <div class="form-step" id="step3Content">
+                    <div class="form-group">
+                        <label class="form-label">Experience Level</label>
+                        <select class="form-input form-select" id="experienceLevel">
+                            <option value="">Select experience level</option>
+                            <option value="entry">Entry Level</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Attachments (Optional)</label>
+                        <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">Click to upload files</div>
+                            <div class="file-upload-hint">PDF, DOC, JPG, PNG up to 10MB</div>
+                        </div>
+                        <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileUpload(this)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-input form-textarea" id="additionalNotes" placeholder="Any additional information or special requirements..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                        <button class="btn btn-primary" onclick="submitProject()">Post Project</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+
+            <button class="top-left-menu-toggle" onclick="toggleTopLeftMenu()">☰</button>
+            <a href="index.html" class="logo">FreelanceHub</a>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="What service are you looking for today?" id="searchInput">
+                <button class="search-btn" onclick="performSearch()">🔍</button>
+            </div>
+            <div class="auth-buttons">
+                <button class="auth-btn" onclick="showNotifications()">🔔</button>
+                <button class="auth-btn" onclick="showMessages()">✉️</button>
+                <div class="user-avatar" onclick="showUserMenu()">R</div>
+                <button class="menu-toggle" onclick="toggleSideMenu()">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <button class="side-menu-close" onclick="toggleSideMenu()">×</button>
+        <div class="side-menu-header">
+            <div class="side-menu-user">
+                <div class="side-menu-avatar">R</div>
+                <div class="side-menu-user-info">
+                    <h3>ram_gani</h3>
+                    <p>Client</p>
+                </div>
+            </div>
+        </div>
+        <div class="side-menu-nav">
+            <div class="side-menu-section">
+                <h4>Account</h4>
+                <button class="side-menu-item" onclick="showOrders()"><span class="icon">📋</span>Orders</button>
+                <button class="side-menu-item" onclick="showWishlist()"><span class="icon">♥️</span>Wishlist</button>
+                <button class="side-menu-item" onclick="showMessages()"><span class="icon">✉️</span>Messages<span class="badge">2</span></button>
+                <button class="side-menu-item" onclick="showNotifications()"><span class="icon">🔔</span>Notifications<span class="badge">3</span></button>
+            </div>
+            <div class="side-menu-divider"></div>
+            <div class="side-menu-section">
+                <h4>Settings</h4>
+                <button class="side-menu-item"><span class="icon">⚙️</span>Profile Settings</button>
+                <button class="side-menu-item" onclick="logout()"><span class="icon">🔒</span>Logout</button>
+            </div>
+        </div>
+    </div>
+    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="toggleSideMenu()"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="slideshow-container">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Tech Team Collaboration" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Tech+Team+Collaboration'">
+            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Software Development Team" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Software+Development+Team'">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Coding Team Meeting" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Coding+Team+Meeting'">
+            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop" class="slideshow-image" alt="Tech Startup Team" onerror="this.src='https://via.placeholder.com/1920x1080/007bff/ffffff?text=Tech+Startup+Team'">
+        </div>
+        <div class="hero-content">
+            <h1>Welcome to FreelanceHub, <span class="italic">ram_gani</span></h1>
+            <p>Find the perfect freelance services for your business. Explore a wide range of talented professionals ready to bring your projects to life.</p>
+            <a href="#categories" class="cta-btn">Explore Services</a>
+        </div>
+    </section>
+
+    <!-- Category Navigation -->
+    <nav class="category-nav">
+        <div class="category-container">
+            <div class="category-links">
+                <a href="#" onclick="filterByCategory('tech')">Tech</a>
+                <a href="#" onclick="filterByCategory('digital-marketing')">Digital Marketing</a>
+                <a href="#" onclick="filterByCategory('video-animation')">Video & Animation</a>
+                <a href="#" onclick="filterByCategory('writing')">Writing & Translation</a>
+                <a href="#" onclick="filterByCategory('music')">Music & Audio</a>
+                <a href="#" onclick="filterByCategory('business')">Business</a>
+                <a href="#" onclick="filterByCategory('finance')">Finance</a>
+                <a href="#" onclick="filterByCategory('ai')">AI Services</a>
+                <a href="#" onclick="filterByCategory('personal')">Personal Growth</a>
+                <a href="#" onclick="filterByCategory('consulting')">Consulting</a>
+                <a href="#" onclick="filterByCategory('data')">Data</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Recommended Section -->
+    <section class="recommended-section">
+        <div class="container">
+            <h2 class="section-title">Recommended for You</h2>
+            <div class="recommended-grid">
+                <div class="recommended-card">
+                    <div class="card-icon">📄</div>
+                    <h3 class="card-title">Post a Project Brief</h3>
+                    <p class="card-description">Get tailored offers for your needs.</p>
+                </div>
+                <div class="recommended-card">
+                    <div class="card-icon">📱</div>
+                    <h3 class="card-title">Download the FreelanceHub App</h3>
+                    <p class="card-description">Stay productive, anywhere you go.</p>
+                </div>
+                <div class="recommended-card">
+                    <div class="card-icon">⚙️</div>
+                    <h3 class="card-title">Tailor FreelanceHub to Your Needs</h3>
+                    <p class="card-description">Complete your profile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section" id="categories">
+        <div class="container">
+            <div class="categories-header">
+                <h2 class="section-title">Explore Popular Categories</h2>
+                <a href="#" class="cta-btn" onclick="showAllCategories()">Show All</a>
+            </div>
+            <div class="categories-grid">
+                <div class="category-sidebar">
+                    <ul class="category-list">
+                        <li onclick="filterServices('ugc')">User Generated Content (UGC)</li>
+                        <li onclick="filterServices('logo')">Logo Design</li>
+                        <li onclick="filterServices('website')">Website Development</li>
+                        <li onclick="filterServices('social')">Social Media Marketing</li>
+                        <li onclick="filterServices('ai')">AI Services</li>
+                        <li onclick="filterServices('writing')">Writing & Translation</li>
+                        <li onclick="filterServices('video')">Video & Animation</li>
+                        <li onclick="filterServices('music')">Music & Audio</li>
+                        <li onclick="filterServices('business')">Business</li>
+                        <li onclick="filterServices('consulting')">Consulting</li>
+                        <li onclick="filterServices('data')">Data</li>
+                    </ul>
+                </div>
+                <div class="services-grid" id="servicesGrid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section class="showcase-section">
+        <div class="container">
+            <h2 class="section-title">Get Inspired by Work Done on FreelanceHub</h2>
+            <div class="showcase-grid" id="showcaseGrid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Web Design</a></li>
+                        <li><a href="#">Graphic Design</a></li>
+                        <li><a href="#">Writing & Editing</a></li>
+                        <li><a href="#">Video & Animation</a></li>
+                        <li><a href="#">Music & Audio</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Terms and Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Premium Packages</a></li>
+                        <li><a href="#">Quick Projects</a></li>
+                        <li><a href="#">Expert Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to our newsletter to receive updates, exclusive offers, and industry insights.</p>
+                    <div class="newsletter">
+                        <input type="email" placeholder="Enter your email">
+                        <button class="cta-btn">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 FreelanceHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data for services
+        const servicesData = [
+            {
+                id: 1,
+                title: "I will create UGC video ads for TikTok, Instagram",
+                provider: "Arina Nust",
+                avatar: "AN",
+                level: "Top Rated",
+                rating: 4.9,
+                reviews: 172,
+                price: "From $60",
+                category: "ugc",
+                image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop"
+            },
+            {
+                id: 2,
+                title: "I will create UGC ads for TikTok or Instagram video",
+                provider: "Laura",
+                avatar: "L",
+                level: "Top Rated",
+                rating: 5.0,
+                reviews: 187,
+                price: "From $65",
+                category: "ugc",
+                image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop"
+            },
+            {
+                id: 3,
+                title: "I will be your social media expert, female UGC creator",
+                provider: "Abigail G",
+                avatar: "AG",
+                level: "Vetted Pro",
+                rating: 5.0,
+                reviews: 157,
+                price: "From $130",
+                category: "social",
+                image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=300&fit=crop"
+            },
+            {
+                id: 4,
+                title: "I will create amazing UGC TikTok reels video",
+                provider: "Daniel Johnson",
+                avatar: "DJ",
+                level: "Top Rated",
+                rating: 5.0,
+                reviews: 143,
+                price: "From $100",
+                category: "ugc",
+                image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
+            },
+            {
+                id: 5,
+                title: "I will design professional logo for your business",
+                provider: "Sarah Design",
+                avatar: "SD",
+                level: "Top Rated",
+                rating: 4.8,
+                reviews: 234,
+                price: "From $30",
+                category: "logo",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+            },
+            {
+                id: 6,
+                title: "I will develop modern responsive website",
+                provider: "Mike Tech",
+                avatar: "MT",
+                level: "Top Rated",
+                rating: 4.9,
+                reviews: 189,
+                price: "From $180",
+                category: "website",
+                image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop"
+            },
+            {
+                id: 7,
+                title: "I will create AI-powered chatbot for your business",
+                provider: "Alex AI",
+                avatar: "AA",
+                level: "Vetted Pro",
+                rating: 5.0,
+                reviews: 98,
+                price: "From $95",
+                category: "ai",
+                image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop"
+            },
+            {
+                id: 8,
+                title: "I will write engaging content for your blog",
+                provider: "Emma Writer",
+                avatar: "EW",
+                level: "Top Rated",
+                rating: 4.7,
+                reviews: 156,
+                price: "From $35",
+                category: "writing",
+                image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop"
+            }
+        ];
+
+        // Sample data for showcase
+        const showcaseData = [
+            {
+                id: 1,
+                title: "Tech Team Collaboration",
+                category: "Team Development",
+                image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop"
+            },
+            {
+                id: 2,
+                title: "Software Development",
+                category: "Programming",
+                image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop"
+            },
+            {
+                id: 3,
+                title: "Coding Team Meeting",
+                category: "Team Collaboration",
+                image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=300&fit=crop"
+            },
+            {
+                id: 4,
+                title: "Tech Startup Team",
+                category: "Startup Culture",
+                image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop"
+            },
+            {
+                id: 5,
+                title: "Web Development",
+                category: "Frontend Development",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop"
+            },
+            {
+                id: 6,
+                title: "Mobile App Development",
+                category: "App Development",
+                image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop"
+            },
+            {
+                id: 7,
+                title: "AI & Machine Learning",
+                category: "Artificial Intelligence",
+                image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop"
+            },
+            {
+                id: 8,
+                title: "Data Science Team",
+                category: "Data Analytics",
+                image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop"
+            }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServices();
+            loadShowcase();
+            checkUserRegistration();
+        });
+
+        // Check if user is registered and display their name
+        function checkUserRegistration() {
+            const userData = localStorage.getItem('freelanceHubUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                const userName = user.firstName || 'User';
+                
+                // Update user name in various places
+                const heroTitle = document.querySelector('.hero h1');
+                if (heroTitle) {
+                    heroTitle.innerHTML = `Welcome to FreelanceHub, <span class="italic">${userName}</span>`;
+                }
+                
+                // Update side menu user info
+                const sideMenuUserInfo = document.querySelector('.side-menu-user-info h3');
+                if (sideMenuUserInfo) {
+                    sideMenuUserInfo.textContent = user.firstName ? `${user.firstName}_${user.lastName || 'user'}` : 'ram_gani';
+                }
+                
+                // Update top-left menu user info
+                const topLeftMenuUserInfo = document.querySelector('.top-left-menu-user-info h3');
+                if (topLeftMenuUserInfo) {
+                    topLeftMenuUserInfo.textContent = user.firstName ? `${user.firstName}_${user.lastName || 'user'}` : 'ram_gani';
+                }
+                
+                console.log('Welcome back,', userName);
+            }
+        }
+
+        // Load services into the grid
+        function loadServices() {
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
+
+            servicesData.forEach(service => {
+                const serviceCard = createServiceCard(service);
+                servicesGrid.appendChild(serviceCard);
+            });
+        }
+
+        // Create service card element
+        function createServiceCard(service) {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.onclick = () => openServiceDetails(service.id);
+
+            card.innerHTML = `
+                <img src="${service.image}" class="service-image" alt="${service.title}" onerror="this.src='https://via.placeholder.com/400x300/007bff/ffffff?text=Service+Image'">
+                <div class="heart-icon" onclick="event.stopPropagation(); toggleWishlist(${service.id})">♡</div>
+                <div class="service-info">
+                    <div class="service-provider">
+                        <div class="provider-avatar">${service.avatar}</div>
+                        <span class="provider-name">${service.provider}</span>
+                        <span class="provider-level">${service.level}</span>
+                    </div>
+                    <div class="service-title">${service.title}</div>
+                    <div class="service-rating">
+                        <span class="stars">⭐</span>
+                        <span class="rating-text">${service.rating} (${service.reviews})</span>
+                    </div>
+                    <div class="service-price">${service.price}</div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Load showcase items
+        function loadShowcase() {
+            const showcaseGrid = document.getElementById('showcaseGrid');
+            showcaseGrid.innerHTML = '';
+
+            showcaseData.forEach(item => {
+                const showcaseCard = createShowcaseCard(item);
+                showcaseGrid.appendChild(showcaseCard);
+            });
+        }
+
+        // Create showcase card element
+        function createShowcaseCard(item) {
+            const card = document.createElement('div');
+            card.className = 'showcase-card';
+            card.onclick = () => openShowcaseDetails(item.id);
+
+            card.innerHTML = `
+                <img src="${item.image}" class="showcase-image" alt="${item.title}" onerror="this.src='https://via.placeholder.com/400x300/007bff/ffffff?text=Showcase+Image'">
+                <div class="showcase-category">${item.category}</div>
+                <div class="heart-icon" onclick="event.stopPropagation(); toggleWishlist('showcase_${item.id}')">♡</div>
+            `;
+
+            return card;
+        }
+
+        // Filter services by category
+        function filterServices(category) {
+            const filteredServices = servicesData.filter(service => service.category === category);
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
+
+            if (filteredServices.length === 0) {
+                servicesGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No services found in this category.</p>';
+                return;
+            }
+
+            filteredServices.forEach(service => {
+                const serviceCard = createServiceCard(service);
+                servicesGrid.appendChild(serviceCard);
+            });
+        }
+
+        // Filter by category from nav
+        function filterByCategory(category) {
+            filterServices(category);
+        }
+
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredServices = servicesData.filter(service => 
+                service.title.toLowerCase().includes(searchTerm) ||
+                service.provider.toLowerCase().includes(searchTerm) ||
+                service.category.toLowerCase().includes(searchTerm)
+            );
+
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
+
+            if (filteredServices.length === 0) {
+                servicesGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #666;">No services found matching your search.</p>';
+                return;
+            }
+
+            filteredServices.forEach(service => {
+                const serviceCard = createServiceCard(service);
+                servicesGrid.appendChild(serviceCard);
+            });
+        }
+
+        // Toggle top-left menu
+        function toggleTopLeftMenu() {
+            const topLeftMenu = document.getElementById('topLeftMenu');
+            const overlay = document.getElementById('topLeftMenuOverlay');
+            topLeftMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Navigate to different sections
+        function navigateTo(section) {
+            // Remove active class from all menu items
+            document.querySelectorAll('.top-left-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.target.closest('.top-left-menu-item').classList.add('active');
+            
+            // Handle navigation based on section
+            switch(section) {
+                case 'home':
+                    showNotification('Navigating to Home');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    break;
+                case 'post-project':
+                    openProjectForm();
+                    break;
+                case 'manage-orders':
+                    showNotification('Opening Manage Orders...');
+                    break;
+                case 'dashboard':
+                    window.location.href = 'dashboard.html';
+                    break;
+            }
+            
+            // Close the menu
+            toggleTopLeftMenu();
+        }
+
+        // Project Form Variables
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        // Open project form
+        function openProjectForm() {
+            document.getElementById('projectFormModal').classList.add('active');
+            resetForm();
+        }
+
+        // Close project form
+        function closeProjectForm() {
+            document.getElementById('projectFormModal').classList.remove('active');
+            resetForm();
+        }
+
+        // Reset form to initial state
+        function resetForm() {
+            currentStep = 1;
+            updateProgress();
+            updateStepIndicator();
+            showStep(1);
+            document.getElementById('projectForm').reset();
+        }
+
+        // Next step
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateProgress();
+                    updateStepIndicator();
+                    showStep(currentStep);
+                }
+            }
+        }
+
+        // Previous step
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+                updateStepIndicator();
+                showStep(currentStep);
+            }
+        }
+
+        // Show specific step
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}Content`).classList.add('active');
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Update step indicator
+        function updateStepIndicator() {
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    dot.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        // Validate current step
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    const title = document.getElementById('projectTitle').value.trim();
+                    const category = document.getElementById('projectCategory').value;
+                    const description = document.getElementById('projectDescription').value.trim();
+                    
+                    if (!title) {
+                        showNotification('Please enter a project title');
+                        return false;
+                    }
+                    if (!category) {
+                        showNotification('Please select a category');
+                        return false;
+                    }
+                    if (!description) {
+                        showNotification('Please enter a project description');
+                        return false;
+                    }
+                    break;
+                case 2:
+                    const budgetMin = document.getElementById('budgetMin').value;
+                    const budgetMax = document.getElementById('budgetMax').value;
+                    const timeline = document.getElementById('projectTimeline').value;
+                    
+                    if (!budgetMin || !budgetMax) {
+                        showNotification('Please enter budget range');
+                        return false;
+                    }
+                    if (parseInt(budgetMin) > parseInt(budgetMax)) {
+                        showNotification('Minimum budget cannot be greater than maximum');
+                        return false;
+                    }
+                    if (!timeline) {
+                        showNotification('Please select a timeline');
+                        return false;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        // Toggle tag selection
+        function toggleTag(tag) {
+            tag.classList.toggle('selected');
+        }
+
+        // Handle file upload
+        function handleFileUpload(input) {
+            const files = input.files;
+            if (files.length > 0) {
+                const fileNames = Array.from(files).map(file => file.name).join(', ');
+                showNotification(`Files selected: ${fileNames}`);
+            }
+        }
+
+        // Submit project
+        function submitProject() {
+            if (validateCurrentStep()) {
+                // Collect form data
+                const formData = {
+                    title: document.getElementById('projectTitle').value,
+                    category: document.getElementById('projectCategory').value,
+                    description: document.getElementById('projectDescription').value,
+                    budgetMin: document.getElementById('budgetMin').value,
+                    budgetMax: document.getElementById('budgetMax').value,
+                    timeline: document.getElementById('projectTimeline').value,
+                    experienceLevel: document.getElementById('experienceLevel').value,
+                    additionalNotes: document.getElementById('additionalNotes').value,
+                    skills: Array.from(document.querySelectorAll('.tag.selected')).map(tag => tag.textContent)
+                };
+
+                // Show success message
+                showNotification('Project posted successfully! Freelancers will start bidding soon.');
+                closeProjectForm();
+                
+                // Here you would typically send the data to your backend
+                console.log('Project Data:', formData);
+            }
+        }
+
+        // Toggle side menu
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            sideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Show all categories
+        function showAllCategories() {
+            loadServices();
+        }
+
+        // Toggle wishlist
+        function toggleWishlist(id) {
+            const heartIcon = event.target;
+            if (heartIcon.innerHTML === '♡') {
+                heartIcon.innerHTML = '♥';
+                heartIcon.style.color = '#007bff';
+                showNotification('Added to wishlist');
+            } else {
+                heartIcon.innerHTML = '♡';
+                heartIcon.style.color = '#333';
+                showNotification('Removed from wishlist');
+            }
+        }
+
+        // Open service details
+        function openServiceDetails(id) {
+            const service = servicesData.find(s => s.id === id);
+            if (service) {
+                showNotification(`Opening details for: ${service.title}`);
+            }
+        }
+
+        // Open showcase details
+        function openShowcaseDetails(id) {
+            const item = showcaseData.find(s => s.id === id);
+            if (item) {
+                showNotification(`Opening showcase: ${item.title}`);
+            }
+        }
+
+        // Show notifications
+        function showNotifications() {
+            showNotification('You have 3 new notifications');
+        }
+
+        // Show messages
+        function showMessages() {
+            showNotification('You have 2 new messages');
+        }
+
+        // Show wishlist
+        function showWishlist() {
+            showNotification('Opening your wishlist...');
+        }
+
+        // Show orders
+        function showOrders() {
+            showNotification('Opening your orders...');
+        }
+
+        // Show user menu
+        function showUserMenu() {
+            toggleSideMenu();
+        }
+
+        // Logout function
+        function logout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            
+            // Show logout notification
+            showNotification('Logging out...');
+            
+            // Redirect to sign-in page
+            setTimeout(() => {
+                window.location.href = 'signIn.html';
+            }, 1000);
+        }
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #007bff;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 4px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                font-weight: 500;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            const hero = document.querySelector('.hero');
+            const heroHeight = hero.offsetHeight;
+
+            if (window.scrollY > heroHeight) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                header.style.background = 'transparent';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.service-card, .showcase-card, .recommended-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>
